@@ -142,7 +142,10 @@ async function handleNotifications(event) {
 function ReceiveData(data) {
   console.log("receive message: " + data);
 
-  let receivedata = data.replace('\n', '').split(";");
+  if (data.startsWith("msg:"))
+    return;
+  
+  const receivedata = data.replace('\n', '').split(";");
   for (let i = 0; i < receivedata.length; i++) {
     const pear = receivedata[i].split("=");
     var ele = document.getElementById(pear[0]);
