@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>小白白高度表</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+  <header>
+    <h1>小白白高度表</h1>
+  </header>
+  <div class="topnav">
+    <a href="index.html">简要介绍</a>
+    <a href="normal_setting.html" class="active">参数设置</a>
+    <a href="advance_setting.html">高级设置</a>
+    <a href="hardware_upgade.html">更新固件</a>
+  </div>
+  <div class="content">
+    <div class="card-grid">
+      <div class="card">
+        <p>
+          <button id="connectBleButton" class="connectButton"> 打开小白白的链接</button>
+          <span style="padding-left: 50px;"></span>
+          <button id="disconnectBleButton" class="disconnectButton"> 断开小白白的链接</button>
+        </p>
+        <p class="gray-label">链接状态: <strong><span id="bleState" style="color:#d13a30;">未链接</span></strong>
+        </p>
+      </div>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <h2>修正海平面压力</h2>
+        <p class="p_left">
+          <label class="red-label">请输入当前实际海拔，然后点击“更新”按钮</label>
+          <br>当前实际海拔
+          <span style="padding-left: 18px;"></span><input type="number" id="altitude" min="-500" max="8848" step="10">米
+          <span style="padding-left: 40px;"></span>修正海平面压力
+          <input type="number" id="baro_qnh" size="7" readonly>hPa
+          <br><span style="padding-left: 120px;"></span>
+          <button id="get_qnh" class="button_small">系统参数</button>
+          <span style="padding-left: 20px;"></span>
+          <button id="set_qnh" class="button_small">更新QNH</button>
+          <br><label class="red-label">说明：高度表根据当前实际海拔，结合测量的气压，计算实际的修正海平面压力(QNH)<br>QNH默认值为1013.25hPa</label>
+        </p>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <h2>上升提示音</h2>
+        <p class="p_left">铃声<span style="padding-left: 30px;"></span>
+          <input type="radio" id="climb_en_1" name="climb"> 打开
+          <input type="radio" id="climb_en_0" name="climb"> 关闭
+          <br>灵敏度<span style="padding-left: 20px;"></span>
+          <input type="number" id="climb_sp" min="0.1" max="1.0" step="0.1" size="3">m/s
+          <br><span style="padding-left: 40px;"></span>
+          <button id="get_climb" class="button_small">系统设置</button>
+          <span style="padding-left: 20px;"></span>
+          <button id="set_climb" class="button_small">提交修改</button>
+          <br><br><label class="red-label">灵敏度可选设置区间[0.1, 1.0]，值越小越灵敏<br>默认上升提示音打开，灵敏度0.1m/s</label>
+        </p>
+      </div>
+      <div class="card">
+        <h2>下沉提示音</h2>
+        <p class="p_left">铃声<span style="padding-left: 30px;"></span>
+          <input type="radio" id="sink_en_1" name="sink"> 打开
+          <input type="radio" id="sink_en_0" name="sink"> 关闭
+          <br>灵敏度<span style="padding-left: 20px;"></span>
+          <input type="number" id="sink_sp" min="-3.0" max="-1.0" step="0.1" size="4">m/s
+          <br><span style="padding-left: 40px;"></span>
+          <button id="get_sink" class="button_small">系统设置</button>
+          <span style="padding-left: 20px;"></span>
+          <button id="set_sink" class="button_small">提交修改</button>
+          <br><br><label class="red-label">可选设置区间[-3.0, -1.0]<br>默认下沉提示音打开，灵敏度-2.0m/s</label>
+        </p>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <h2>气流边沿提示音</h2>
+        <p class="p_left">铃声<span style="padding-left: 50px;"></span>
+          <input type="radio" id="near_en_1" name="near"> 打开
+          <input type="radio" id="near_en_0" name="near"> 关闭
+          <br>气流边沿<span style="padding-left: 20px;"></span>
+          <input type="number" id="near_sp" min="-1.0" max="0.0" step="0.1" size="4">m/s
+          <br><span style="padding-left: 40px;"></span>
+          <button id="get_near" class="button_small">系统设置</button>
+          <span style="padding-left: 20px;"></span>
+          <button id="set_near" class="button_small">提交修改</button>
+          <br><br><label class="red-label">提示进入气流边沿，可选设置区间[-1.0, 0.0]<br>默认气流边沿提示音关闭，默认值-0.5m/s</label>
+        </p>
+      </div>
+      <div class="card">
+        <h2>静态滑翔提示音</h2>
+        <p class="p_left">铃声<span style="padding-left: 50px;"></span>
+          <input type="radio" id="glid_en_1" name="glid"> 打开
+          <input type="radio" id="glid_en_0" name="glid"> 关闭
+          <br>静态滑翔<span style="padding-left: 20px;"></span>
+          <input type="number" id="glid_sp" min="-1.8" max="-0.8" step="0.1" size="4">m/s
+          <br><span style="padding-left: 40px;"></span>
+          <button id="get_glid" class="button_small">系统设置</button>
+          <span style="padding-left: 20px;"></span>
+          <button id="set_glid" class="button_small">提交修改</button>
+          <br><label class="red-label">这里的“静态滑翔”指没有上升、下沉气流的飞行<br>有效设置区间[-1.8, -0.8]<br>默认关闭提示音，默认值-1.4m/s</label>
+        </p>
+      </div>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <h2>接收数据</h2>
+        <div id="log" class="black-bg"></div>
+      </div>
+    </div>
+
+  </div>
+  <script src="app.js"></script>
+  <script>
+    const button_set_qnh = document.getElementById('set_qnh');
+    const button_set_climb = document.getElementById('set_climb');
+    const button_set_sink = document.getElementById('set_sink');
+    const button_set_near = document.getElementById('set_near');
+    const button_set_glid = document.getElementById('set_glid');
+
+    const button_get_qnh = document.getElementById('get_qnh');
+    const button_get_climb = document.getElementById('get_climb');
+    const button_get_sink = document.getElementById('get_sink');
+    const button_get_near = document.getElementById('get_near');
+    const button_get_glid = document.getElementById('get_glid');
+
+    button_set_qnh.addEventListener('click', (event) => {
+      event.preventDefault();
+      let command = 'set_qnh -a ' + document.getElementById('altitude').value;
+      sendMessage(command);
+    }
+    );
+    button_set_climb.addEventListener('click', (event) => {
+      event.preventDefault();
+      let command = 'set_climb --en ' + (document.getElementById('climb_en_1').checked ? 1 : 0) +
+        ' --sp ' + document.getElementById('climb_sp').value;
+      sendMessage(command);
+    });
+    button_set_sink.addEventListener('click', (event) => {
+      event.preventDefault();
+      let command = 'set_sink --en ' + (document.getElementById('sink_en_1').checked ? 1 : 0) +
+        ' --sp ' + document.getElementById('sink_sp').value;
+      sendMessage(command);
+    });
+    button_set_near.addEventListener('click', (event) => {
+      event.preventDefault();
+      let command = 'set_near --en ' + (document.getElementById('near_en_1').checked ? 1 : 0) +
+        ' --sp ' + document.getElementById('near_sp').value;
+      sendMessage(command);
+    });
+    button_set_glid.addEventListener('click', (event) => {
+      event.preventDefault();
+      let command = 'set_glid --en ' + (document.getElementById('glid_en_1').checked ? 1 : 0) +
+        ' --sp ' + document.getElementById('glid_sp').value;
+      sendMessage(command);
+    });
+
+    button_get_qnh.addEventListener('click', (event) => {
+      event.preventDefault();
+      let command = 'get_qnh';
+      sendMessage(command);
+    });
+    button_get_climb.addEventListener('click', (event) => {
+      event.preventDefault();
+      let command = 'get_climb';
+      sendMessage(command);
+    });
+    button_get_sink.addEventListener('click', (event) => {
+      event.preventDefault();
+      let command = 'get_sink';
+      sendMessage(command);
+    });
+    button_get_near.addEventListener('click', (event) => {
+      event.preventDefault();
+      let command = 'get_near';
+      sendMessage(command);
+    });
+    button_get_glid.addEventListener('click', (event) => {
+      event.preventDefault();
+      let command = 'get_glid';
+      sendMessage(command);
+    });
+  </script>
+
+</body>
+
+</html>
