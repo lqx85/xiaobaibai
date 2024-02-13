@@ -8,10 +8,6 @@ let bluetoothDevice;
 let characteristic_tx, characteristic_rx;
 const logEl = document.getElementById("log");
 
-const command_list = ['$get_qnh:', '$get_climb:', '$get_sink:', '$get_near:', '$get_glid:',
-                      '$get_adv_climb:', '$get_adv_sink:', '$get_adv_near:', '$get_adv_glid:', 
-                      '$get_proto:', '$get_battery:'];
-
 const bleStateContainer = document.getElementById('bleState');
 const button_connect = document.getElementById('connectBleButton');
 const button_disconnect = document.getElementById('disconnectBleButton');

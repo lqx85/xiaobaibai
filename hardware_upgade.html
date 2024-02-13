@@ -36,7 +36,7 @@
         <p class="p_left">
           <input type="file" name="otafile" id="otafile" />
           <span style="padding-left: 200px;"></span>
-          <button id="upload" accept=".bin" onclick="startUpload()">更新</button>
+          <button id="upload" accept=".txt">更新</button>
 
         <div id="progressBar">0%</div>
 
@@ -51,87 +51,7 @@
       </div>
     </div>
   </div>
-  <script src="app.js"></script>
-  <script>
-    var progress_present = 0;
-    const inputfile = document.getElementById("otafile");
-    const progressBar = document.getElementById("progressBar");
-    const uploadBtn = document.getElementById("upload");
-
-    class FileStreamer {
-      constructor(file, encoding = 'utf-8') {
-        this.file = file;
-        this.offset = 0;
-        this.defaultChunkSize = 16; // bytes
-        this.textDecoder = new TextDecoder(encoding);
-        this.rewind();
-      }
-      rewind() {
-        this.offset = 0;
-      }
-      isEndOfFile() {
-        return this.offset >= this.getFileSize();
-      }
-      async eventPromise(target, eventName) {
-        return new Promise((resolve) => {
-          const handleEvent = (event) => {
-            resolve(event);
-          };
-          target.addEventListener(eventName, handleEvent);
-        });
-      }
-      async readFile(blob) {
-        const fileReader = new FileReader();
-        fileReader.readAsArrayBuffer(blob);
-        const event = await this.eventPromise(fileReader, 'loadend');
-        const target = event.target;
-        if (target.error) {
-          throw target.error;
-        }
-        return target.result;
-      }
-      async readBlockAsText(length = this.defaultChunkSize) {
-        const blob = this.file.slice(this.offset, this.offset + length);
-        const buffer = await this.readFile(blob);
-        const decodedText = this.textDecoder.decode(buffer, { stream: true });
-        this.offset += blob.size;
-        progress_present = this.offset / this.file.size * 100;
-
-        if (this.isEndOfFile()) {
-          const finalText = this.textDecoder.decode();
-          if (finalText) {
-            return decodedText + finalText;
-          }
-        }
-        return decodedText;
-      }
-      getFileSize() {
-        return this.file.size;
-      }
-    }
-
-    async function startUpload() {
-      if (inputfile.files.length == 0) {
-        alert("No file selected!");
-      }
-      else {
-        const fileStreamer = new FileStreamer(inputfile.files[0]);
-        await sendMessage("#HWBG\n");
-        while (!fileStreamer.isEndOfFile()) {
-          const data = await fileStreamer.readBlockAsText();
-          // console.log(progress_present.toFixed(1), '%');
-          console.log(data);
-          await sendMessage("#HWDA"+data+"\n");
-        }
-        await sendMessage("#HWFN\n");
-      }
-    }
-//https://github.com/electron/electron/issues/40282
-    setInterval( () => {
-      progressBar.style.width = progress_present.toFixed(1) + "%";
-      progressBar.innerHTML = progress_present.toFixed(1) + "%";
-    }, 200);//Call () every second
-  </script>
+  <script src="hardware_upgade.js"></script>
 </body>
 
 </html>
