@@ -124,11 +124,6 @@ button {
     font-size: 1rem;
 }
 
-.reading {
-    font-size: 1.8rem;
-}
-
-
 p {
     font-size: 18px;
     padding-top: 0px;
@@ -177,11 +172,18 @@ select {
     width: 100%;
 }
 
-#progressBar {
+.progressBar-outer
+{
+    width: 100%;
+    height: 20px;
+    background: gray;
+}
+.progressBar-inner
+{
     width: 0%;
-    height: 30px;
-    background-color: #04AA6D;
-    text-align: center; /* To center it horizontally (if you want) */
-    line-height: 30px; /* To center it vertically */
+    height: 20px;
+    text-align: right;
     color: white;
-  }
+    background: green;
+}
+

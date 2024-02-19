@@ -13,16 +13,16 @@
     <h1>小白白高度表</h1>
   </header>
   <div class="topnav">
-    <a href="index.html">简要介绍</a>
-    <a href="normal_setting.html" class="active">参数设置</a>
+    <a href="index.html" class="active">简要介绍</a>
+    <a href="normal_setting.html">参数设置</a>
     <a href="advance_setting.html">高级设置</a>
-    <a href="hardware_upgade.html">更新固件</a>
+    <a href="firmware_upgade.html">更新固件</a>
   </div>
   <div class="content">
     <div class="card-grid">
       <div class="card">
         <p>
-          <button id="connectBleButton" class="connectButton" onclick="test()"> 打开小白白的链接</button>
+          <button id="connectBleButton" class="connectButton"> 打开小白白的链接</button>
           <span style="padding-left: 50px;"></span>
           <button id="disconnectBleButton" class="disconnectButton"> 断开小白白的链接</button>
         </p>
@@ -30,22 +30,16 @@
         </p>
       </div>
     </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <p></p>
+      </div>
+
+    </div>
   </div>
   <script>
-    function IntToByteArray(nun) {
-      const bytearray = new Uint8Array(2);
-      bytearray[0] = (num & 0xff);
-      bytearray[1] = (num >> 8 & 0xff);
-      return bytearray;
-    }
-    function test() {
-      for (let i = 0; i < 258; i++) {
-        var a = IntToByteArray(i);
-        console.log("IntToByteArray(" + i + ") = " + a[0].toString(2) + ", " + a[1].toString(2));
-        
-      }
-      
-    }
+    
   </script>
 
 </body>
