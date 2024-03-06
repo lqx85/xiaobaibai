@@ -186,6 +186,40 @@
       let command = 'get_glid';
       sendMessage(command);
     });
+
+    function OnReceiveData(data) {
+      // 高度表数据
+      if (rx_buffer.startsWith("$LK8EX1") ||
+        rx_buffer.startsWith("$PTAS1") ||
+        rx_buffer.startsWith("$PTAS1") ||
+        rx_buffer.startsWith("$LXWP0")) {
+        return;
+      }
+
+      console.log("receive message: " + data);
+      if (data.startsWith("msg:")) {
+        consoleWrite(rx_buffer.replace("msg:", ""));
+        return;
+      }
+      else {
+        consoleWrite(rx_buffer);
+      }
+
+      const receivedata = data.replace('\n', '').split(";");
+      for (let i = 0; i < receivedata.length; i++) {
+        const pear = receivedata[i].split("=");
+        var ele = document.getElementById(pear[0]);
+        if (ele == null)
+          continue;
+        if (pear[0] == "protocol")
+          ele.selectedIndex = pear[1];
+        else if (ele.getAttribute("type") == "radio")
+          ele.checked = (pear[1] == "1");
+        else
+          ele.value = pear[1];
+      }
+    }
+
   </script>
 
 </body>

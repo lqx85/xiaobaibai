@@ -33,13 +33,95 @@
 
     <div class="card-grid">
       <div class="card">
-        <p></p>
+        <p>电池电量：</p>
+        <p>固件版本：</p>
       </div>
-
     </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <p>
+        <div id="chart-altitude" class="container"></div>
+        </p>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div id="log" class="black-bg"></div>
+      </div>
+    </div>
+
   </div>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="app.js"></script>
+
   <script>
-    
+    const localOffset = (new Date()).getTimezoneOffset() * 60000;
+    var count = 0;
+    var sum_alt = 0;
+
+    var chart_alt = new Highcharts.Chart({
+      chart: { renderTo: 'chart-altitude' },
+      title: { text: '海拔曲线' },
+      series: [{
+        showInLegend: false,
+        data: []
+      }],
+      plotOptions: {
+        line: {
+          animation: false,
+          dataLabels: { enabled: false }
+        },
+        series: { color: '#059e8a' }
+      },
+      xAxis: {
+        type: 'datetime',
+        dateTimeLabelFormats: { second: '%H:%M' }
+      },
+      yAxis: {
+        title: { text: '海拔(米)' }
+      },
+      credits: { enabled: false }
+    });
+
+    function OnReceiveData(data) {
+      var y = null;
+      // 高度表数据
+      if (rx_buffer.startsWith("$LK8EX1")) {
+        rx_buffer.split(",");
+        y = parseFloat(rx_buffer.split(",")[2]);
+      }
+      else if (rx_buffer.startsWith("$PTAS1")) {
+        rx_buffer.split(",");
+        y = (parseFloat(rx_buffer.split(",")[3]) - 2000) * 0.3048;
+      }
+      else if (rx_buffer.startsWith("$LXWP0")) {
+        rx_buffer.split(",");
+        y = parseFloat(rx_buffer.split(",")[3]);
+      }
+      else if (rx_buffer.startsWith("$PRS")) {
+        rx_buffer.split(" ");
+        y = parseFloat(rx_buffer.split(",")[1]);
+      }
+
+      if (y != null) {
+        if (count < 20) {
+          count ++;
+          sum_alt += y;
+        }
+        else {
+          var x = (new Date()).getTime() + localOffset;
+          if (chart_alt.series[0].data.length > 1000) {
+            chart_alt.series[0].addPoint([x, sum_alt/count], true, true, true);
+          } else {
+            chart_alt.series[0].addPoint([x, sum_alt/count], true, false, true);
+          }
+          count = 0;
+          sum_alt = 0;
+        }
+      }
+    }
   </script>
 
 </body>

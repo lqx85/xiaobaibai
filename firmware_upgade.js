@@ -1,16 +1,12 @@
 let namePrefix = "xiaob";
 
 const SVR_CHR_OTA_CONTROL_ERROR = 0;
-
 const SVR_CHR_OTA_CONTROL_REQUEST = 1;
 const SVR_CHR_OTA_CONTROL_REQUEST_ACK = 2;
-
 const SVR_CHR_OTA_CONTROL_PACKETSIZE = 3;
 const SVR_CHR_OTA_CONTROL_PACKETSIZE_ACK = 4;
-
 const SVR_CHR_OTA_CONTROL_FINISH = 5;
 const SVR_CHR_OTA_CONTROL_FINISH_ACK = 6;
-
 const SVR_CHR_OTA_CONTROL_VERSION = 7;
 const SVR_CHR_OTA_CONTROL_VERSION_ACK = 8;
 
@@ -79,7 +75,7 @@ button_connect.addEventListener("click", async (event) => {
       ],
     });
 
-    bluetoothDevice.addEventListener("gattserverdisconnected", (event)=>{
+    bluetoothDevice.addEventListener("gattserverdisconnected", (event) => {
       bleStateContainer.innerHTML = "未链接";
       bleStateContainer.style.color = "#d13a30";
     });
@@ -102,7 +98,7 @@ button_connect.addEventListener("click", async (event) => {
       // Handle the notification event.
       let ctr_val = event.target.value.getUint8(0);
       console.log("characteristic_ctr value: " + ctr_val);
-  
+
       if (ctr_val == SVR_CHR_OTA_CONTROL_REQUEST_ACK) {
         ctr_cmd.push("req_ack");
         console.log("ota request acknowledged.");
@@ -197,8 +193,7 @@ button_upload.addEventListener("click", async (event) => {
 
       delay_ms(100);
       consoleWrite("发送数据...");
-      if (ctr_cmd.get() == "packet_ack")
-      {
+      if (ctr_cmd.get() == "packet_ack") {
         for (let i = 0; i < buffer.byteLength; i += packet_size) {
           const chunk = buffer.slice(i, i + packet_size);
           await characteristic_data.writeValueWithResponse(chunk);
