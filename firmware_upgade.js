@@ -168,32 +168,32 @@ button_upload.addEventListener("click", async (event) => {
     consoleWrite("文件尺寸：" + arrayBuffer.byteLength + "字节");
 
     // Write to the characteristic.
-    await characteristic_data.writeValueWithResponse(Int32ToArrayBuffer(arrayBuffer.byteLength));
+    characteristic_data.writeValueWithResponse(Int32ToArrayBuffer(arrayBuffer.byteLength));
 
     // write the send size code to OTA Control
     consoleWrite("发送OTA升级请求...");
-    await characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_REQUEST));
+    characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_REQUEST));
 
     delay_ms(100);
     if (ctr_cmd.get() == "req_ack") {
       // 发送数据包大小(bytes)
-      await characteristic_data.writeValueWithResponse(Int8ToArrayBuffer(packet_size));
+      characteristic_data.writeValueWithResponse(Int8ToArrayBuffer(packet_size));
       // write the request OP code to OTA Control
-      await characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_PACKETSIZE));
+      characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_PACKETSIZE));
 
       delay_ms(100);
       consoleWrite("发送数据...");
       if (ctr_cmd.get() == "packet_ack") {
         for (let i = 0; i < arrayBuffer.byteLength; i += packet_size) {
           const chunk = arrayBuffer.slice(i, i + packet_size);
-          await characteristic_data.writeValueWithResponse(chunk);
+          characteristic_data.writeValueWithResponse(chunk);
           progressBar.style.width = (i / file.size * 100).toFixed(2) + "%";
           progressBar.innerText = (i / file.size * 100).toFixed(2) + "%";
         }
 
         // write done OP code to OTA Control
         consoleWrite("数据传输完成.");
-        await characteristic_ctr.writeValueWithResponse(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_FINISH));
+        characteristic_ctr.writeValueWithResponse(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_FINISH));
 
         delay_ms(100);
         if (ctr_cmd.get() == "done_ack") {
