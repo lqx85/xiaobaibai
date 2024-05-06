@@ -162,38 +162,38 @@ button_upload.addEventListener("click", async (event) => {
   event.preventDefault();
   button_upload.disable = true;
 
-  fetch('xiaobaibai.bin').then(res => res.arrayBuffer()).then(arrayBuffer => {
+  fetch('xiaobaibai.bin').then(res => res.arrayBuffer()).then(async (arrayBuffer) => {
     // use ArrayBuffer
     // 写bin文件尺寸(bytes)
     consoleWrite("文件尺寸：" + arrayBuffer.byteLength + "字节");
 
     // Write to the characteristic.
-    characteristic_data.writeValueWithResponse(Int32ToArrayBuffer(arrayBuffer.byteLength));
+    await characteristic_data.writeValueWithResponse(Int32ToArrayBuffer(arrayBuffer.byteLength));
 
     // write the send size code to OTA Control
     consoleWrite("发送OTA升级请求...");
-    characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_REQUEST));
+    await characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_REQUEST));
 
     delay_ms(100);
     if (ctr_cmd.get() == "req_ack") {
       // 发送数据包大小(bytes)
-      characteristic_data.writeValueWithResponse(Int8ToArrayBuffer(packet_size));
+      await characteristic_data.writeValueWithResponse(Int8ToArrayBuffer(packet_size));
       // write the request OP code to OTA Control
-      characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_PACKETSIZE));
+      await characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_PACKETSIZE));
 
       delay_ms(100);
       consoleWrite("发送数据...");
       if (ctr_cmd.get() == "packet_ack") {
         for (let i = 0; i < arrayBuffer.byteLength; i += packet_size) {
           const chunk = arrayBuffer.slice(i, i + packet_size);
-          characteristic_data.writeValueWithResponse(chunk);
+          await characteristic_data.writeValueWithResponse(chunk);
           progressBar.style.width = (i / file.size * 100).toFixed(2) + "%";
           progressBar.innerText = (i / file.size * 100).toFixed(2) + "%";
         }
 
         // write done OP code to OTA Control
         consoleWrite("数据传输完成.");
-        characteristic_ctr.writeValueWithResponse(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_FINISH));
+        await characteristic_ctr.writeValueWithResponse(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_FINISH));
 
         delay_ms(100);
         if (ctr_cmd.get() == "done_ack") {
