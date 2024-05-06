@@ -187,8 +187,8 @@ button_upload.addEventListener("click", async (event) => {
         for (let i = 0; i < arrayBuffer.byteLength; i += packet_size) {
           const chunk = arrayBuffer.slice(i, i + packet_size);
           await characteristic_data.writeValueWithResponse(chunk);
-          progressBar.style.width = (i / file.size * 100).toFixed(2) + "%";
-          progressBar.innerText = (i / file.size * 100).toFixed(2) + "%";
+          progressBar.style.width = (i / arrayBuffer.byteLength * 100).toFixed(2) + "%";
+          progressBar.innerText = (i / arrayBuffer.byteLength * 100).toFixed(2) + "%";
         }
 
         // write done OP code to OTA Control
