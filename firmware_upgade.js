@@ -22,7 +22,7 @@ const bleStateContainer = document.getElementById("bleState");
 const button_connect = document.getElementById("connectBleButton");
 const button_disconnect = document.getElementById("disconnectBleButton");
 const button_upload = document.getElementById("upload");
-const otafile = document.getElementById("otafile");
+
 const progressBar = document.getElementById("progressBar");
 const firmware_version = document.getElementById("firmware_version");
 
@@ -176,43 +176,42 @@ button_upload.addEventListener("click", async (event) => {
 
     delay_ms(100);
     if (ctr_cmd.get() == "req_ack") {
-        // 发送数据包大小(bytes)
-        await characteristic_data.writeValueWithResponse(Int8ToArrayBuffer(packet_size));
-        // write the request OP code to OTA Control
-        await characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_PACKETSIZE));
+      // 发送数据包大小(bytes)
+      await characteristic_data.writeValueWithResponse(Int8ToArrayBuffer(packet_size));
+      // write the request OP code to OTA Control
+      await characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_PACKETSIZE));
+
+      delay_ms(100);
+      consoleWrite("发送数据...");
+      if (ctr_cmd.get() == "packet_ack") {
+        for (let i = 0; i < arrayBuffer.byteLength; i += packet_size) {
+          const chunk = arrayBuffer.slice(i, i + packet_size);
+          await characteristic_data.writeValueWithResponse(chunk);
+          progressBar.style.width = (i / file.size * 100).toFixed(2) + "%";
+          progressBar.innerText = (i / file.size * 100).toFixed(2) + "%";
+        }
+
+        // write done OP code to OTA Control
+        consoleWrite("数据传输完成.");
+        await characteristic_ctr.writeValueWithResponse(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_FINISH));
 
         delay_ms(100);
-        consoleWrite("发送数据...");
-        if (ctr_cmd.get() == "packet_ack") {
-          for (let i = 0; i < arrayBuffer.byteLength; i += packet_size) {
-            const chunk = arrayBuffer.slice(i, i + packet_size);
-            await characteristic_data.writeValueWithResponse(chunk);
-            progressBar.style.width = (i / file.size * 100).toFixed(2) + "%";
-            progressBar.innerText = (i / file.size * 100).toFixed(2) + "%";
-          }
-
-          // write done OP code to OTA Control
-          consoleWrite("数据传输完成.");
-          await characteristic_ctr.writeValueWithResponse(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_FINISH));
-
-          delay_ms(100);
-          if (ctr_cmd.get() == "done_ack") {
-            consoleWrite("OTA successful!");
-          }
+        if (ctr_cmd.get() == "done_ack") {
+          consoleWrite("OTA successful!");
         }
-        else
-        {
-          console.log("错误！数据包大小不一致！");
-        }
-        button_upload.disable = false;
-     // };
+      }
+      else {
+        console.log("错误！数据包大小不一致！");
+      }
+      button_upload.disable = false;
+      // };
     }
     else {
       consoleWrite("xiaob did not acknowledge the OTA request.");
       console.log("xiaob did not acknowledge the OTA request.");
       button_upload.disable = false;
     }
-});
+  });
 });
 
 // 输出窗口日志
