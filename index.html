@@ -13,108 +13,15 @@
     <h1>小白白高度表</h1>
   </header>
   <div class="topnav">
-    <a href="index.html" class="active">简要介绍</a>
+    <a href="index.html" class="active">使用说明</a>
     <a href="normal_setting.html">参数设置</a>
     <a href="firmware_upgade.html">更新固件</a>
   </div>
   <div class="content">
-    <div class="card-grid">
-      <div class="card">
-        <p>
-          <button id="connectBleButton" class="connectButton"> 打开小白白的链接</button>
-          <span style="padding-left: 50px;"></span>
-          <button id="disconnectBleButton" class="disconnectButton"> 断开小白白的链接</button>
-        </p>
-        <p class="gray-label">链接状态: <strong><span id="bleState" style="color:#d13a30;">未链接</span></strong>
-        </p>
-      </div>
-    </div>
-
-    <div class="card-grid">
-      <div class="card">
-        <p>电池电量：</p>
-        <p>固件版本：</p>
-      </div>
-    </div>
-
-    <div class="card-grid">
-      <div class="card">
-        <p>
-        <div id="chart-altitude" class="container"></div>
-        </p>
-      </div>
-    </div>
-
-    <div class="card-grid">
-      <div class="card">
-        <div id="log" class="black-bg"></div>
-      </div>
-    </div>
-
+    <object data="manual.pdf" type="application/pdf" width="95%" height="666px">
+  </object>
   </div>
-  <script src="https://code.highcharts.com/highcharts.js"></script>
-  <script src="app.js"></script>
-
-  <script>
-    let timezoneOffset = (new Date()).getTimezoneOffset() * 60000;
-    var count = 0;
-    var sum_alt = 0;
-
-    var chart_alt = new Highcharts.Chart({
-      chart: { renderTo: 'chart-altitude' },
-      title: { text: '海拔曲线' },
-      series: [{
-        showInLegend: false,
-        data: []
-      }],
-      plotOptions: {
-        line: {
-          animation: false,
-          dataLabels: { enabled: false }
-        },
-        series: { color: '#059e8a' }
-      },
-      xAxis: {
-        type: 'datetime',
-        dateTimeLabelFormats: { second: '%H:%M:%S' }
-      },
-      yAxis: {
-        title: { text: '海拔(米)' }
-      },
-      credits: { enabled: false }
-    });
-
-    function OnReceiveData(data) {
-      var y = null;
-      // 高度表数据
-      if (rx_buffer.startsWith("$LK8EX1")) {
-        rx_buffer.split(",");
-        y = parseFloat(rx_buffer.split(",")[2]);
-      }
-      else if (rx_buffer.startsWith("$PTAS1")) {
-        rx_buffer.split(",");
-        y = (parseFloat(rx_buffer.split(",")[3]) - 2000) * 0.3048;
-      }
-      else if (rx_buffer.startsWith("$LXWP0")) {
-        rx_buffer.split(",");
-        y = parseFloat(rx_buffer.split(",")[3]);
-      }
-      else if (rx_buffer.startsWith("$PRS")) {
-        rx_buffer.split(" ");
-        y = parseFloat(rx_buffer.split(",")[1]);
-      }
-
-      if (y != null) {
-        var x = (new Date()).getTime() - timezoneOffset;
-        if (chart_alt.series[0].data.length > 500) {
-          chart_alt.series[0].addPoint([x, y], true, true, true);
-        } else {
-          chart_alt.series[0].addPoint([x, y], true, false, true);
-        }
-      }
-    }
-  </script>
-
+  
 </body>
 
 </html>

@@ -37,14 +37,12 @@ class Queue {
   push(item) {
     this.items[this.backIndex] = item;
     this.backIndex++;
-    // console.log("push: " + item);
   }
   get() {
     if (this.frontIndex < this.backIndex) {
       const item = this.items[this.frontIndex];
       delete this.items[this.frontIndex];
       this.frontIndex++;
-      // console.log("get: " + item);
       return item;
     }
     else {
@@ -67,7 +65,6 @@ button_connect.addEventListener("click", async (event) => {
   try {
     logEl.innerHTML = "";
 
-    // console.log("Requesting Bluetooth Device...");
     consoleWrite("搜索高度表蓝牙服务...", "grey");
     bluetoothDevice = await navigator.bluetooth.requestDevice({
       filters: [
@@ -81,15 +78,12 @@ button_connect.addEventListener("click", async (event) => {
       bleStateContainer.style.color = "#d13a30";
     });
 
-    // console.log("Connecting to GATT Server...");
     consoleWrite("正在建立链接...", "grey");
     const server = await bluetoothDevice.gatt.connect();
 
-    // console.log("Getting Service...");
     consoleWrite("正在获取服务...", "grey");
     const service = await server.getPrimaryService(UUID_SERVICE);
 
-    //console.log("Getting Characteristic...");
     consoleWrite("获取服务特征...", "grey");
     // 获取ble服务特征
     characteristic_data = await service.getCharacteristic(OTA_DATA_UUID);
@@ -98,24 +92,19 @@ button_connect.addEventListener("click", async (event) => {
     characteristic_ctr.addEventListener("characteristicvaluechanged", async (event) => {
       // Handle the notification event.
       let ctr_val = event.target.value.getUint8(0);
-      console.log("characteristic_ctr value: " + ctr_val);
 
       if (ctr_val == SVR_CHR_OTA_CONTROL_REQUEST_ACK) {
         ctr_cmd.push("req_ack");
-        console.log("ota request acknowledged.");
       }
       else if (ctr_val == SVR_CHR_OTA_CONTROL_PACKETSIZE_ACK) {
-        console.log("packet size acknowledged.");
         ctr_cmd.push("packet_ack");
         characteristic_ctr.stopNotifications();
       }
       else if (ctr_val == SVR_CHR_OTA_CONTROL_FINISH_ACK) {
-        console.log("ota done acknowledged.");
         ctr_cmd.push("done_ack");
         characteristic_ctr.stopNotifications();
       }
       else if (ctr_val == SVR_CHR_OTA_CONTROL_VERSION_ACK) {
-        console.log("firmware version acknowledged.");
         const value = await characteristic_data.readValue();
         const version = new TextDecoder().decode(value);
         firmware_version.innerHTML = version;
@@ -124,12 +113,10 @@ button_connect.addEventListener("click", async (event) => {
       else if (ctr_val == SVR_CHR_OTA_CONTROL_ERROR) {
         bluetoothDevice.gatt.disconnect();
         consoleWrite("发生错误...");
-        console.log("acknowledged error!.");
         window.alert("发生错误，请重启高度表后再尝试升级！");
         location.reload();
       }
       else {
-        console.log("Notification received: %d", ctr_val);
         bluetoothDevice.gatt.disconnect();
       }
     });
@@ -141,7 +128,6 @@ button_connect.addEventListener("click", async (event) => {
     bleStateContainer.style.color = "green";
 
     // 请求版本信息
-    console.log("Sending OTA ctr: request.");
     await characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_VERSION));
 
   } catch (error) {
@@ -201,14 +187,13 @@ button_upload.addEventListener("click", async (event) => {
         }
       }
       else {
-        console.log("错误！数据包大小不一致！");
+        console.log("升级错误，请重启高度表！");
       }
       button_upload.disable = false;
       // };
     }
     else {
-      consoleWrite("xiaob did not acknowledge the OTA request.");
-      console.log("xiaob did not acknowledge the OTA request.");
+      consoleWrite("错误：小白白没有对升级做出响应！");
       button_upload.disable = false;
     }
   });
@@ -230,12 +215,10 @@ function consoleWrite(text, color) {
 // 判断浏览器是否支持蓝牙设备
 function isWebBluetoothEnabled() {
   if (!navigator.bluetooth) {
-    console.log("Web Bluetooth API is not available in this browser!");
     bleStateContainer.innerHTML = "当前浏览器不支持蓝牙设备，请更换浏览器!";
     window.alert("当前浏览器不支持蓝牙设备，请更换浏览器!");
     return false
   }
-  console.log("Web Bluetooth API supported in this browser.");
   return true
 }
 
