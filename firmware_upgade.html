@@ -13,7 +13,7 @@
     <h1>小白白高度表</h1>
   </header>
   <div class="topnav">
-    <a href="index.html">使用说明</a>
+    <a href="index.html">简要介绍</a>
     <a href="normal_setting.html">参数设置</a>
     <a href="firmware_upgade.html" class="active">更新固件</a>
   </div>
@@ -34,6 +34,7 @@
         <h2>固件升级</h2>
         <p class="p_left">
           <p class="p_left">当前固件版本：<a id="firmware_version"></a></p>
+          <input type="file" name="otafile" id="otafile" accept=".bin"/><br><br>
           <div style="padding-left: 5%;width: 90%;text-align: center;">
             <div id="total" class="progressBar-outer">
               <div id="progressBar" class="progressBar-inner"></div>
@@ -46,8 +47,6 @@
         <div id="log" class="black-bg"></div>
       </div>
     </div>
-
-    
   </div>
   <script src="firmware_upgade.js"></script>
 </body>

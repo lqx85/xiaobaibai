@@ -1,8 +1,8 @@
-var namePrefix = 'xiaob';
+var namePrefix = 'xiaobai';
 const UUID_SERVICE = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
 const UUID_CHAR_TX = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"; // Write
 const UUID_CHAR_RX = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"; // Notify
-const BLE_MTU = 20;
+const BLE_MTU = 256;
 
 let bluetoothDevice;
 let characteristic_tx, characteristic_rx;
@@ -12,6 +12,9 @@ let rx_buffer = "";
 const bleStateContainer = document.getElementById('bleState');
 const button_connect = document.getElementById('connectBleButton');
 const button_disconnect = document.getElementById('disconnectBleButton');
+// const button_disable_vario_proto = document.getElementById('disable_vario_proto');
+// const button_enable_vario_proto = document.getElementById('enable_vario_proto');
+
 const chart_altitude = document.getElementById('disconnectBleButton');
 
 button_connect.addEventListener('click', async (event) => {
@@ -56,7 +59,7 @@ button_connect.addEventListener('click', async (event) => {
         if (text.indexOf('\n') >= 0) {
           rx_buffer += text;
           OnReceiveData(rx_buffer);
-          // consoleWrite(rx_buffer);
+          consoleWrite(rx_buffer);
           // console.log(rx_buffer);
           rx_buffer = "";
         } else {
@@ -83,6 +86,16 @@ button_disconnect.addEventListener('click', async (event) => {
   event.preventDefault();
   bluetoothDevice.gatt.disconnect();
 });
+
+// button_disable_vario_proto.addEventListener('click', async (event) => {
+//   event.preventDefault();
+//   sendMessage('disable_vario_proto');
+// });
+
+// button_enable_vario_proto.addEventListener('click', async (event) => {
+//   event.preventDefault();
+//   sendMessage('enable_vario_proto');
+// });
 
 function consoleWrite(text, color) {
   const el = document.createElement("div");
@@ -119,4 +132,3 @@ async function sendMessage(msg) {
 function delay_ms(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-

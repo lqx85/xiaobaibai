@@ -13,7 +13,7 @@
     <h1>小白白高度表</h1>
   </header>
   <div class="topnav">
-    <a href="index.html">使用说明</a>
+    <a href="index.html">简要介绍</a>
     <a href="normal_setting.html" class="active">参数设置</a>
     <a href="firmware_upgade.html">更新固件</a>
   </div>
@@ -51,8 +51,8 @@
       <div class="card">
         <h2>上升提示音</h2>
         <p class="p_left">铃声<span style="padding-left: 30px;"></span>
-          <input type="radio" id="climb_en_1" name="climb"> 打开
-          <input type="radio" id="climb_en_0" name="climb"> 关闭
+          <input type="radio" id="climb_en_1" value="1" name="climb_en"> 打开
+          <input type="radio" id="climb_en_0" value="0" name="climb_en"> 关闭
           <br>灵敏度<span style="padding-left: 20px;"></span>
           <input type="number" id="climb_sp" min="0.1" max="1.0" step="0.1" size="3">m/s
           <br><span style="padding-left: 40px;"></span>
@@ -65,8 +65,8 @@
       <div class="card">
         <h2>下沉提示音</h2>
         <p class="p_left">铃声<span style="padding-left: 30px;"></span>
-          <input type="radio" id="sink_en_1" name="sink"> 打开
-          <input type="radio" id="sink_en_0" name="sink"> 关闭
+          <input type="radio" id="sink_en_1" value="1" name="sink_en"> 打开
+          <input type="radio" id="sink_en_0" value="0" name="sink_en"> 关闭
           <br>灵敏度<span style="padding-left: 20px;"></span>
           <input type="number" id="sink_sp" min="-3.0" max="-1.0" step="0.1" size="4">m/s
           <br><span style="padding-left: 40px;"></span>
@@ -82,8 +82,8 @@
       <div class="card">
         <h2>气流边沿提示音</h2>
         <p class="p_left">铃声<span style="padding-left: 50px;"></span>
-          <input type="radio" id="near_en_1" name="near"> 打开
-          <input type="radio" id="near_en_0" name="near"> 关闭
+          <input type="radio" id="near_en_1" value="1" name="near_en"> 打开
+          <input type="radio" id="near_en_0" value="0" name="near_en"> 关闭
           <br>气流边沿<span style="padding-left: 20px;"></span>
           <input type="number" id="near_sp" min="-1.0" max="0.0" step="0.1" size="4">m/s
           <br><span style="padding-left: 40px;"></span>
@@ -96,8 +96,8 @@
       <div class="card">
         <h2>静态滑翔提示音</h2>
         <p class="p_left">铃声<span style="padding-left: 50px;"></span>
-          <input type="radio" id="glid_en_1" name="glid"> 打开
-          <input type="radio" id="glid_en_0" name="glid"> 关闭
+          <input type="radio" id="glid_en_1" value="1" name="glid_en"> 打开
+          <input type="radio" id="glid_en_0" value="0" name="glid_en"> 关闭
           <br>静态滑翔<span style="padding-left: 20px;"></span>
           <input type="number" id="glid_sp" min="-1.8" max="-0.8" step="0.1" size="4">m/s
           <br><span style="padding-left: 40px;"></span>
@@ -207,15 +207,42 @@
       const receivedata = data.replace('\n', '').split(";");
       for (let i = 0; i < receivedata.length; i++) {
         const pear = receivedata[i].split("=");
-        var ele = document.getElementById(pear[0]);
-        if (ele == null)
-          continue;
-        if (pear[0] == "protocol")
-          ele.selectedIndex = pear[1];
-        else if (ele.getAttribute("type") == "radio")
-          ele.checked = (pear[1] == "1");
-        else
-          ele.value = pear[1];
+        switch (pear[0]) {
+          case "climb_en":
+          case "sink_en":
+          case "glid_en":
+          case "near_en":
+            {
+              console.log("switch ", pear[0])
+              var ele_1 = document.getElementById(pear[0] + "_1")
+              var ele_0 = document.getElementById(pear[0] + "_0")
+              if (ele_1 == null)
+                continue
+              if (ele_0 == null)
+                continue
+              ele_1.checked = (pear[1] == "1")
+              ele_0.checked = (pear[1] == "0")
+              console.log("radio checked")
+            }
+            break;
+
+          case "protocol":
+            {
+              var ele = document.getElementById(pear[0])
+              if (ele == null)
+                continue
+              ele.selectedIndex = pear[1]
+            }
+            break;
+
+          default:
+            {
+              var ele = document.getElementById(pear[0])
+              if (ele == null)
+                continue
+              ele.value = pear[1]
+            }
+        }
       }
     }
 
