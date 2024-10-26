@@ -148,7 +148,8 @@ button_upload.addEventListener("click", async (event) => {
   event.preventDefault();
   button_upload.disable = true;
 
-  fetch('xiaobaibai.bin').then(res => res.arrayBuffer()).then(async (arrayBuffer) => {
+  // fetch('xiaobaibai.bin').then(res => res.arrayBuffer()).then(async (arrayBuffer) => {
+  fetch('https://gitee.com/qixian88/variosetting/raw/master/bin/xiaobaibai.bin').then(res => res.arrayBuffer()).then(async (arrayBuffer) => {
     // use ArrayBuffer
     // 写bin文件尺寸(bytes)
     consoleWrite("文件尺寸：" + arrayBuffer.byteLength + "字节");
