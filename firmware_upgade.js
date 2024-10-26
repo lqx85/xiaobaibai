@@ -165,46 +165,40 @@ button_disconnect.addEventListener("click", (event) => {
 // 上传固件
 button_upload.addEventListener("click", async (event) => {
   event.preventDefault();
-  if (otafile.files.length == 0) {
-    window.alert("请选择升级固件!");
-    return;
-  }
+  // if (otafile.files.length == 0) {
+  //   window.alert("请选择升级固件!");
+  //   return;
+  // }
   button_upload.disable = true;
 
-  // 写bin文件尺寸(bytes)
-  consoleWrite("文件尺寸：" + otafile.files[0].size + "字节");
-  // Write to the characteristic.
-  await characteristic_data.writeValueWithResponse(Int32ToArrayBuffer(otafile.files[0].size));
+  /////////////////////////////////////////
+  fetch('xiaobaibai.bin').then(res => res.arrayBuffer()).then(async (arrayBuffer) => {
+    // use ArrayBuffer
+    // 写bin文件尺寸(bytes)
+    consoleWrite("文件尺寸：" + arrayBuffer.byteLength + "字节");
 
-  // write the send size code to OTA Control
-  consoleWrite("发送OTA升级请求...");
-  await characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_REQUEST));
+    // Write to the characteristic.
+    await characteristic_data.writeValueWithResponse(Int32ToArrayBuffer(arrayBuffer.byteLength));
 
-  delay_ms(100);
-  if (ctr_cmd.get() == "req_ack") {
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const buffer = reader.result;
-      console.log("file size: " + buffer.byteLength);
+    // write the send size code to OTA Control
+    consoleWrite("发送OTA升级请求...");
+    await characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_REQUEST));
 
+    delay_ms(100);
+    if (ctr_cmd.get() == "req_ack") {
       // 发送数据包大小(bytes)
-      // consoleWrite("Sending packet size = " + packet_size);
-      // console.log("Sending packet size = " + packet_size);
-      // Write to the characteristic.
       await characteristic_data.writeValueWithResponse(Int8ToArrayBuffer(packet_size));
-
       // write the request OP code to OTA Control
-      // consoleWrite("Sending packet size.");
       await characteristic_ctr.writeValue(Int8ToArrayBuffer(SVR_CHR_OTA_CONTROL_PACKETSIZE));
 
       delay_ms(100);
       consoleWrite("发送数据...");
       if (ctr_cmd.get() == "packet_ack") {
-        for (let i = 0; i < buffer.byteLength; i += packet_size) {
-          const chunk = buffer.slice(i, i + packet_size);
+        for (let i = 0; i < arrayBuffer.byteLength; i += packet_size) {
+          const chunk = arrayBuffer.slice(i, i + packet_size);
           await characteristic_data.writeValueWithResponse(chunk);
-          progressBar.style.width = (i / file.size * 100).toFixed(2) + "%";
-          progressBar.innerText = (i / file.size * 100).toFixed(2) + "%";
+          progressBar.style.width = (i / arrayBuffer.byteLength * 100).toFixed(2) + "%";
+          progressBar.innerText = (i / arrayBuffer.byteLength * 100).toFixed(2) + "%";
         }
 
         // write done OP code to OTA Control
@@ -216,17 +210,18 @@ button_upload.addEventListener("click", async (event) => {
           consoleWrite("OTA successful!");
         }
       }
+      else {
+        console.log("升级错误，请重启高度表！");
+      }
       button_upload.disable = false;
-    };
-
-    const file = otafile.files[0];
-    reader.readAsArrayBuffer(file);
-  }
-  else {
-    consoleWrite("xiaob did not acknowledge the OTA request.");
-    console.log("xiaob did not acknowledge the OTA request.");
-    button_upload.disable = false;
-  }
+      // };
+    }
+    else {
+      consoleWrite("错误：小白白没有对升级做出响应！");
+      button_upload.disable = false;
+    }
+  });
+  /////////////////////////////////////////////////
 });
 
 // 输出窗口日志
